@@ -34,16 +34,37 @@
 详见文档内 `表 1. 性能指标`。
 
 ## 🚀 快速运行
-
+上位机（GUI）：
 ```bash
 # 安装依赖
 pip install pyqt5 pyqtgraph
 
 # 启动软件
 python main.py
-
+下位机（开发板）：
 # Step 1: 交叉编译（LoongArch）
-cd embedded_src/
+进入文件件，打开终端
+vim Makefile
+内容如下：
+CC=loongarch64-linux-gnu-gcc
+CFLAGS=-Wall -Iinclude
+
+SRCS=$(wildcard src/*.c)
+OBJS=$(patsubst src/%.c,build/%.o,$(SRCS))
+TARGET=main
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ -lm
+
+build/%.o: src/%.c
+	@mkdir -p build
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -rf build $(TARGET)
+进行编译：
 make
 
 # Step 2: 上传至开发板
@@ -51,4 +72,5 @@ scp main /home/loongson@开发板IP:/home/loongson/
 
 # Step 3: SSH 登录并运行
 ssh loongson@开发板IP
+chmod +x main//赋予权限
 ./main
