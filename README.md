@@ -42,3 +42,13 @@ pip install pyqt5 pyqtgraph
 # 启动软件
 python main.py
 
+# Step 1: 交叉编译（LoongArch）
+cd embedded_src/
+make
+
+# Step 2: 上传至开发板
+scp main /home/loongson@开发板IP:/home/loongson/
+
+# Step 3: SSH 登录并运行
+ssh loongson@开发板IP
+./main
